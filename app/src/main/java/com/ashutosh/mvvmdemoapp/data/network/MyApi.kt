@@ -1,6 +1,7 @@
 package com.ashutosh.mvvmdemoapp.data.network
 
 import com.ashutosh.mvvmdemoapp.data.network.responses.AuthResponse
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -21,8 +22,17 @@ interface MyApi {
     ) : Response<AuthResponse>
 
     companion object {
-        operator fun invoke() : MyApi{
+        operator fun invoke(
+            networkConnectionInterceptor: NetworkConnectionInterceptor
+        ) : MyApi{
+
+            val okHttpclient = OkHttpClient.Builder()
+                .addInterceptor(networkConnectionInterceptor)
+                .build()
+
+
             return Retrofit.Builder()
+                .client(okHttpclient)
                 .baseUrl("https://api.simplifiedcoding.in/course-apis/mvvm/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
